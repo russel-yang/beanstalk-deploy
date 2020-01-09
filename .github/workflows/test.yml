@@ -1,0 +1,24 @@
+name: test github workflow
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout source code
+      uses: actions/checkout@v1
+    - name: retrieve buid information
+      id: build_info
+      run: |
+        echo "##[set-output name=version;]${GITHUB_SHA::8}"
+        if [[ $GITHUB_EVENT_NAME == "push" ]] ;then
+          echo "::set-output name=branch_name::${GITHUB_REF##*/}"
+        else 
+          echo "::set-output name=branch_name::${GITHUB_HEAD_REF}"
+        fi
+    - name: use output
+      run: |
+        echo ${{ steps.build_info.outputs.version }}         
+        echo ${{ steps.build_info.outputs.branch_name }}
+      
+
